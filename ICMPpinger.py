@@ -42,26 +42,37 @@ def checksum(string):
     return answer
 
 
-def receiveOnePing(mySocket, ID, timeout, destAddr): 
-    
+def receiveOnePing(mySocket, ID, timeout, destAddr):
+
     timeLeft = timeout
     
     while True:
         startedSelect = time.time()
 
-        whatReady = select.select([mySocket], [], [], timeLeft) 
+        whatReady = select.select([mySocket], [], [], timeLeft)
         howLongInSelect = (time.time() - startedSelect)
-        if whatReady[0] == []: # Timeout 
+        if whatReady[0] == []: # Timeout
             return "Request timed out."
-
         timeReceived = time.time()
         recPacket, addr = mySocket.recvfrom(1024)
+
 
         #---------------#
         # Fill in start #
         #---------------#
 
-            # TODO: Fetch the ICMP header from the IP packet
+        #"recPacket[20:28]" was taken from this StackOverflow page: https://docs.python.org/3/library/struct.html
+        recIcmpHeader = struct.unpack("bbHHh", recPacket[20:28])
+        recType = recIcmpHeader[0]
+        recCode = recIcmpHeader[1]
+        recChecksum = recIcmpHeader[2]
+        recPacketID = recIcmpHeader[3]
+        recSequence = recIcmpHeader[4]
+
+        recPayload = struct.unpack("d", recPacket[28:])
+
+        delay = (time.time() - recPayload[0]) * 1000
+        return delay
 
         #-------------#
         # Fill in end #
@@ -85,7 +96,7 @@ def sendOnePing(mySocket, destAddr, ID):
     data = struct.pack("d", time.time())
 
     # Calculate the checksum on the data and the dummy header. 
-    myChecksum = checksum(str(header + data))
+    myChecksum = checksum(''.join(map(chr, header+data)))
 
     # Get the right checksum, and put in the header 
     if sys.platform == 'darwin':
@@ -103,7 +114,7 @@ def sendOnePing(mySocket, destAddr, ID):
 
 
 
-def doOnePing(destAddr, timeout): 
+def doOnePing(destAddr, timeout):
     icmp = getprotobyname("icmp")
 
     # SOCK_RAW is a powerful socket type. For more details:	
@@ -113,17 +124,18 @@ def doOnePing(destAddr, timeout):
 
     myID = os.getpid() & 0xFFFF # Return the current process i 
     sendOnePing(mySocket, destAddr, myID)
+
     delay = receiveOnePing(mySocket, myID, timeout, destAddr)
- 
-    mySocket.close() 
+
+    mySocket.close()
     return delay
 
 
 def ping(host, timeout=1):
 
     # timeout=1 means: If one second goes by without a reply from the server,
+    # the client assumes that either the client's ping or the server's pong is lost
 
-    # the client assumes that either the client's ping or the server's pong is lost 
     dest = gethostbyname(host)
     print("Pinging " + dest + " using Python:") 
     print("")
@@ -135,5 +147,8 @@ def ping(host, timeout=1):
         time.sleep(1) # one second 
     return delay
 
+
 # Runs program
-ping("google.com")
+if __name__ == "__main__":
+    serverToPing = input("What should I ping? ")
+    ping(serverToPing)
