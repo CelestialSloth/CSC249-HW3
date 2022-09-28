@@ -2,9 +2,11 @@ Use this file to record your reflection on this assignment and answer the prompt
 
 1. What worked, what didn't, what advice would you give someone taking this course in the future?
 
-I tried several different things to unpack the ICMP header and the payload from recPacket. However, none of them worked because it didn't occur to me that the received packet was structured differently than the packet that was sent--it had extra information at the beginning. I finally figured this out by printing the sent packet and the received packet's contents, which made the discrepancy very obvious. I spent about three hours stuck on this until I found a helpful StackOverflow post that showed me where the ICMP header began. I would say that printing everything helped me figure this out, and additionally looking for outside resources sooner would have sped up the process of solving this issue. 
+Initially, the assignment seemed very daunting and I wasn't sure where to start. Attending Jordan's office hours helped clear up some initial confusion. (Somehow, even just the "Fill in start/end" comments had thrown me off.) I would advise students to start assignments early so that office hours and TA hours are still an option.
 
-In general, I found the Slack channel to be a very helpful resource and I would encourage students to take advantage of it. Reading through others' questions and answers helped me figure out where I might be stuck and solutions for it, and when I posted questions students were very helpful. TA hours were also a wonderful resource, both for getting help and for being assured that I was not the only person who was confused or stuck.
+Later on, I became stuck on the step where we had to unpack the ICMP header and fetch information from it. I tried several different things to unpack the ICMP header and the payload from recPacket. However, none of them worked because it didn't occur to me that the received packet was structured differently than the packet that was sent--it had extra information at the beginning. I finally figured this out by printing the sent packet and the received packet's contents, which made the discrepancy very obvious. I spent about three hours stuck on this until I found a helpful StackOverflow post that showed me where the ICMP header began. I would say that printing everything helped me figure this out, and additionally looking for outside resources sooner would have sped up the process of solving this issue. 
+
+In general, I found the Slack channel to be a very helpful resource and I would encourage students to take advantage of it. Reading through others' questions and answers helped me figure out where I might be stuck and solutions for it, and when I posted questions students (and Jordan) were very helpful. TA hours were also a wonderful resource, both for getting help and for being assured that I was not the only person who was confused or stuck.
 
 2. Test your `ping` and `traceroute` programs on 4 target hosts, each on a different continent and include the output below.
 
@@ -25,7 +27,6 @@ A) Ping delay data from pings sent to bu.edu.eg, located in Cairo, Egypt (Africa
 * 172.69277572631836
 * 171.80323600769043
 * 165.11106491088867
-* 171.55
 
 Additionally, here is the output of ICMPtraceroute.py:
 * 1 rtt=17 ms 131.229.239.254
