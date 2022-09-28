@@ -24,13 +24,17 @@ def build_packet():
     # Fill in start #
     #---------------#
 
-        # TODO: Make the header in a similar way to the ping exercise.
-        # Append checksum to the header.
+    # Makes the header in a similar way to the ping exercise.
+
     myCheckSum = 0
+    #Get the ID
     myID = os.getpid() & 0xFFFF
+    #Generate and pack the header
     header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myCheckSum, myID, 1)
+    #Pack the data--we are sending data about the time again, although this is less important for traceroute functionality
     data = struct.pack("d", time.time())
 
+    #Calculate the header checksum
     myChecksum = checksum(''.join(map(chr, header + data)))
 
     # Get the right checksum, and put in the header
@@ -40,6 +44,7 @@ def build_packet():
     else:
         myChecksum = htons(myChecksum)
 
+    #Insert the calculated checksum into the header
     header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myCheckSum, myID, 1)
 
         
@@ -61,7 +66,7 @@ def get_route(hostname):
             # Fill in start #
             #---------------#
 
-                # TODO: Make a raw socket named mySocket
+            # Make a raw socket named mySocket
             icmp = getprotobyname("icmp")
             mySocket = socket(AF_INET, SOCK_RAW, icmp)
 
@@ -98,7 +103,7 @@ def get_route(hostname):
                 # Fill in start #
                 #---------------#
 
-                    #TODO: Fetch the icmp type from the IP packet
+                # This extracts and unpacks the ICMP header from the packet and extracts the type
                 recIcmpHeader = struct.unpack("bbHHh", recvPacket[20:28])
                 types = recIcmpHeader[0]
 

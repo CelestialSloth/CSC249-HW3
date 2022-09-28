@@ -61,16 +61,21 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         # Fill in start #
         #---------------#
 
-        #"recPacket[20:28]" was taken from this StackOverflow page: https://docs.python.org/3/library/struct.html
+        #"recPacket[20:28]" was taken from this StackOverflow page: https://docs.python.org/3/library/struct.html.
+        # This assumes the packet always starts on 21st byte? character? of recPacket.
         recIcmpHeader = struct.unpack("bbHHh", recPacket[20:28])
+
+        # Retrieve information from the header that the instructions said to retrieve
         recType = recIcmpHeader[0]
         recCode = recIcmpHeader[1]
         recChecksum = recIcmpHeader[2]
         recPacketID = recIcmpHeader[3]
         recSequence = recIcmpHeader[4]
 
+        #Retrieve and unpack the payload.
         recPayload = struct.unpack("d", recPacket[28:])
 
+        #Using the time in the payload, calculate the delay in milliseconds.
         delay = (time.time() - recPayload[0]) * 1000
         return delay
 
